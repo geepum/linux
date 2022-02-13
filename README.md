@@ -44,7 +44,7 @@ passwd [username]
 ```
 <br>
 
-## file manaagement
+## file management 
 
 check what users and doing what
 ```bash
@@ -54,26 +54,26 @@ w
 
 check detailed information about a file
 ```bash
-stat [filename]
-stat [filename] | grep Access
+stat [filepath]
+stat [filepath] | grep Access
 ```
 <br>
 
 change file owner
 ```bash
-chown [user] [filename]
-chown [user]:[group] [filename] # this will change the whole group
-chown -R [user]:[group] [filename] # -R will make it applied to all subdirectories
+chown [user] [filepath]
+chown [user]:[group] [filepath] # this will change the whole group
+chown -R [user]:[group] [filepath] # -R will make it applied to all subdirectories
 ```
 <br>
 
 change file permissions
 ```bash
-chmod 400 [filename] # only user gets read permission
-chmod a=rwx [filename] # all gets read, write, and execute permissions
-chmod u=r+x [filename] # user gets read and write permissions
-chmod o+x pfilename] # other gets execute permission
-chmod g=rwx [filename] # group gets read, write, and execute permissions
+chmod 400 [filepath] # only user gets read permission
+chmod a=rwx [filepath] # all gets read, write, and execute permissions
+chmod u=r+x [filepath] # user gets read and write permissions
+chmod o+x pfilepath] # other gets execute permission
+chmod g=rwx [filepath] # group gets read, write, and execute permissions
 ```
 <br>
 
