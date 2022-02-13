@@ -1,4 +1,4 @@
-# Red Hat Enterprise Linux
+# Linux
 
 ## Searching
 
