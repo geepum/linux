@@ -10,6 +10,92 @@ uname -r # show just the os version
 ```
 <br>
 
+#### loop
+```bash
+for i in geepum terry june; do
+  echo "My name is $i";
+done
+# My name is geepum
+# My name is terry
+# My name is june
+
+for i in {1..5..2}; do
+  echo $i
+done
+# 1
+# 3
+# 5
+
+seq 4 # 1 2 3 4 in each line
+seq 2 5 # 2 3 4 5 in each line
+seq 1 2 9 # 1 3 5 7 9 in each line
+seq -s, 1 4 # 1, 2, 3, 4
+seq -f "%02g" 3 # 01 02 03 in each line. 0 - no indentation / 2 - digits
+seq -f "%04g" 3 # 0001 0002 0003 in each line
+expr `seq -s " + " 1 100` # 5050. shows the result of the intended operation
+touch $(seq -f "file%g" 1 10) # creates from file1 to file10
+
+for i in $(seq 1 2 9); do
+  echo "Number: $i";
+done
+# Number: 1
+# Number: 3
+# ...
+# Number: 9
+
+i=1
+while [ $i -le 3 ]; do
+  echo "i is $i";
+  i=$(($i+1));
+done
+# i is 1
+# i is 2
+# i is 3
+
+for i in $(seq 1 5); do
+  if [ $i -eq 4 ]; then
+    break
+  fi
+  echo "Number: $i";
+done
+# shows Number: 1 to Number: 3 in each line
+
+for i in $(seq 1 10); do
+  if [ $i -gt 5 ] && [ $i -lt 10 ]; then
+    continue
+  fi;
+    echo "Number: $i";
+done
+# shows Number: 1 to Number 5 then skips to Number: 10 in each line
+```
+<br>
+
+#### variables and aliases
+```bash
+# show list of shell variables
+set | less
+
+# show list of environment variables
+printenv | less
+
+# setting variables
+VARIABLE_NAME="some value"
+
+# unsetting variables
+unset VARIABLE_NAME
+
+# adding a path. If to keep permanently, add the line to the startup file
+PATH=$PATH:/my-path
+export PATH
+
+# add aliases in startup file
+alias ALIAS_NAME='my command'
+
+# remove aliases
+unalias ALIAS_NAME
+```
+<br>
+
 ## Searching
 
 find man page with a keyword
