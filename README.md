@@ -2,6 +2,15 @@
 
 ## os
 
+### basics
+
+vi /etc/resolv.conf
+- define nameservers
+
+rdate -s time.bora.net
+rdate -p time.bora.net
+- synch with online time
+
 show os information in details
 ```bash
 cat /etc/os-release # show as environment variables
