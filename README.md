@@ -25,6 +25,18 @@ uname -r # show just the os version
 ```
 <br>
 
+#### networking
+`vim /etc/sysconfig/network-scripts/ifcfg-ens32`
+```
+BOOTPROTO=static => if set as 'none', means NAT using private IP
+ONBOOT=yes
+IPADDR=1.1.2.22
+NETWORK=1.1.2.0
+BROADCAST=1.1.2.255
+GATEWAY=1.1.2.2
+```
+`systemctl restart network`
+
 #### cat
 - `cat > a` + space + enter + text => creates a file 'a' with the text
 - `cat < a` => outputs file 'a' to the display
