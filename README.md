@@ -1,5 +1,11 @@
 # Linux
 
+## Multipass
+
+`multipass version`
+`multipass find`
+`multipass launch [alias] --name [name of my choice]`
+
 ## os
 
 ### basics
@@ -18,6 +24,27 @@ hostnamectl # show in document format
 uname -r # show just the os version
 ```
 <br>
+
+#### cat
+- `cat > a` + space + enter + text => creates a file 'a' with the text
+- `cat < a` => outputs file 'a' to the display
+- `cat a b > c` => adds file 'a' and 'b' to file 'c'
+
+#### copy
+- `cp -r ./a ./b ./c/` => copy directories and sub-files to 'c' directory
+ 
+#### rmdir
+- `rmdir -p ./a/*` => deletes only the sub-folders with no files/directories
+
+#### date
+- `date` => shows date info
+- `date (month) (day) (hour) (minute) (year)` => updates the date
+
+#### head / tail
+- `head (filename)` => first 10 lines
+- `tail (filename)` => last 10 lines
+- `head -5 (filename)` => first 5 lines
+
 
 #### loop
 ```bash
