@@ -10,25 +10,60 @@
 
 ### basics
 
-vi /etc/resolv.conf
 - define nameservers
+`vi /etc/resolv.conf`
 
-rdate -s time.bora.net
-rdate -p time.bora.net
 - synch with online time
+`rdate -s time.bora.net`
+`rdate -p time.bora.net`
 
-show os information in details
+- show os information in details
 ```bash
 cat /etc/os-release # show as environment variables
 hostnamectl # show in document format
 uname -r # show just the os version
 ```
-<br>
+- check shell
+`echo $SHELL`
+
+- list the possible shells
+`chsh -l`
+
+- change to other shells
+`chsh -s /bin/bash`
+
+#### Disks
+- sda => SATA disk 'a'
+- linux understands the devices as files
+- if additional disk is added => sdb
+
+1. show disk info
+`fdisk -l /dev/sdb`
+
+2. partitioning
+`fdisk /dev/sdb` => `m` for help => `n` for new` => `p` for primary => `1` for partitioning => `w` for saving
+
+3. format new disk after saving
+`mkfs -t ext4 /dev/sdb1`
+
+4. mount created disk to a folder
+`mount /dev/sdb1 /mnt/sdb`
+
+5. check disk info
+`df -h`
+
+6. Need to auto mount because it won't by automatically
+`vi /etc/fstab`
+append `/dev/sdb1	/mnt/sdb	ext4	defaults	1 2`
+
+7. check by rebooting
+`reboot`
+`df -h` => check if /dev/sdb1 still exists after reboot
 
 #### networking
 `vim /etc/sysconfig/network-scripts/ifcfg-ens32`
 ```
-BOOTPROTO=static => if set as 'none', means NAT using private IP
+BOOTPROTO=static #if set as 'none', means NAT using private IP or you can set it as dhcp
 ONBOOT=yes
 IPADDR=1.1.2.22
 NETWORK=1.1.2.0
@@ -36,6 +71,35 @@ BROADCAST=1.1.2.255
 GATEWAY=1.1.2.2
 ```
 `systemctl restart network`
+
+#### change password
+- `shutdown -r now` => when it reboots, press `e`
+- change `ro` to `rw`
+- change `rhgb quiet LANG=ko_KR.UTF-8` to `init=/bin/bash`
+- press ctrl+x
+- `passwd` => enter the new root password
+- at this stage, it still won't work because of linux security related to this
+- create a hidden file to go around this security policy
+- `touch /.autorelabel` => reboot by `exec /sbin/init`
+
+#### tape archiving
+- create `tar -cvf (new file name).tar (source)`
+- compress `gzip  (location)`
+- do it at once
+  - `tar -cvzf (location/new file name).tar.gz (source)`
+  - `tar -cvfj (location/new file name).bz2 (source)`
+- uncompress
+  - `tar -xvfz (location/filename)`
+  - `tar -xvfj (location/filename)`
+
+#### mount
+- `umount /dev/sr0`
+- `mkdir cdrom` => `mount /dev/sr0 /cdrom`
+
+#### package manager
+- find package files that have vim `rpm -qa | grep vim`
+- delete packages `rpm -e (filename)`
+- install packages `rpm -ivh (filename)`
 
 #### cat
 - `cat > a` + space + enter + text => creates a file 'a' with the text
@@ -46,7 +110,7 @@ GATEWAY=1.1.2.2
 - `cp -r ./a ./b ./c/` => copy directories and sub-files to 'c' directory
  
 #### rmdir
-- `rmdir -p ./a/*` => deletes only the sub-folders with no files/directories
+- `rmdir -p ./a/` => deletes only the sub-folders with no files/directories
 
 #### date
 - `date` => shows date info
