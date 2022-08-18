@@ -71,6 +71,20 @@ BROADCAST=1.1.2.255
 GATEWAY=1.1.2.2
 ```
 `systemctl restart network`
+- `ifconfig ens32 down` or `up` => turn off/on LAN card
+- `route`
+- `netstat -s >> 20220818_netlog`
+- telnet-server
+  - `cd /usr/lib/systemd/system` => `vim telnet.socket` => `systemctl start telnet.socket` => `systemctl enable telnet.socket` => `systemctl status telnet.socket` => `getenforce` check if SElinux is enforced/perssive/disabled => `setenforce 0` => `vim /etc/sysconfig/selinux` => `SELINUX=disabled` and reboot => `firewall-config` or `firewall-cmd --permanent --add-service=telnet` => `firewall-cmd --permanent --add-port=23/tcp` => `firewall-cmd --reload`
+
+#### file
+- `stat (filename)`
+- `chown` 
+- `chmod`
+  - `chmod u=rwx (filename)`
+  - `chmod u=r+w (filename)`
+  - `chmod o+r (filename)`
+  - `chmod u-w (filename)`
 
 #### change password
 - `shutdown -r now` => when it reboots, press `e`
@@ -100,6 +114,23 @@ GATEWAY=1.1.2.2
 - find package files that have vim `rpm -qa | grep vim`
 - delete packages `rpm -e (filename)`
 - install packages `rpm -ivh (filename)`
+- `yum -y remove (package name)`
+- `yum -y install (package name)`
+
+#### systemctl, init, systemd
+- `init 6` or `sudo systemctl reboot` => reboot
+- `systemctl get-default` => displays the default setting
+- `systemctl set-default graphical.target` => changes to graphical interface
+- `systemctl set-default multi-user.target` => changes to CLI 
+
+#### general
+- `yum -y install nautilus`
+- `nautilus` => opens the finder window
+- `vim /etc/sysconfig/selinux` => `SELINUX=disabled` this was originally 'enforcing' => this only applies after reboot
+- `setenforce 0` => changes to persmissive => `init 6` => reboots and becomes disabled
+- `vim /etc/hosts` => configures local hosts
+- `vim /etc/resolv.conf` => configures domain name server 
+- `vim /etc/hostname` => changes hostname
 
 #### cat
 - `cat > a` + space + enter + text => creates a file 'a' with the text
