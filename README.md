@@ -132,6 +132,30 @@ GATEWAY=1.1.2.2
 - `vim /etc/resolv.conf` => configures domain name server 
 - `vim /etc/hostname` => changes hostname
 
+#### users
+- `useradd (name)`
+- `useradd -D`
+- `userdel (name)`
+- `passwd (name)`
+- `vim /etc/defaults/useradd` => default contents when new users are added
+- `userdel -r` => -r erases everything. else, home directory remains
+- `chmod u=wrx (filename)` or `chmod u+x (filename)` or `chmod 755 (filename)`
+- `chown geepum:geepum (filename)` or `chmod :root (filename)` or `chmod root: (filename)`
+- `chgrp root (filename)`
+- `umask` => default value that is subtracted from default permissions when files/dirs are created
+
+#### samba
+- `yum -y install samba-client samba-common`
+- `yum -y install cifs-utils`
+- `mount -t cifs //10.5.1.14/share /share -o username=root`
+- `firewall-config` => open samba* and http*
+- `yum -y install httpd\*` => without \ sign
+- backup /etc/hosts /etc/resolve.conf /etc/httpd/conf/httpd.conf
+- `cd /var/www` => check folders => `cd html` => `vim ./index.html`
+- `systemctl start httpd` => http://localhost in browser
+- `vim /etc/httpd/conf/httpd.conf` => conf file
+- `chown user1.user1 /temp` => change ownership of user/group of /temp to user1
+
 #### cat
 - `cat > a` + space + enter + text => creates a file 'a' with the text
 - `cat < a` => outputs file 'a' to the display
@@ -250,26 +274,6 @@ man -k [keyword]
 search files with globbing
 ```bash
 ls -l [*[0-9]*] # fine a file with a number inside the file name
-```
-<br>
-
-## User management
-
-add users
-```bash
-useradd [name]
-```
-<br>
-
-delete users
-```bash
-userdel [name]
-```
-<br>
-
-change password of a user
-```bash
-passwd [username]
 ```
 <br>
 
