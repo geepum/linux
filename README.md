@@ -123,11 +123,12 @@ GATEWAY=1.1.2.2
 - `systemctl set-default graphical.target` => changes to graphical interface
 - `systemctl set-default multi-user.target` => changes to CLI 
 
-#### general
+#### firewall
 - `yum -y install nautilus`
 - `nautilus` => opens the finder window
 - `vim /etc/sysconfig/selinux` => `SELINUX=disabled` this was originally 'enforcing' => this only applies after reboot
 - `setenforce 0` => changes to persmissive => `init 6` => reboots and becomes disabled
+- `setenforce 1` => changes back to enforced
 - `vim /etc/hosts` => configures local hosts
 - `vim /etc/resolv.conf` => configures domain name server 
 - `vim /etc/hostname` => changes hostname
@@ -141,6 +142,7 @@ GATEWAY=1.1.2.2
 - `userdel -r` => -r erases everything. else, home directory remains
 - `chmod u=wrx (filename)` or `chmod u+x (filename)` or `chmod 755 (filename)`
 - `chown geepum:geepum (filename)` or `chmod :root (filename)` or `chmod root: (filename)`
+- `chown user1.user1 /temp` => change ownership of user/group of /temp to user1
 - `chgrp root (filename)`
 - `umask` => default value that is subtracted from default permissions when files/dirs are created
 
@@ -149,12 +151,44 @@ GATEWAY=1.1.2.2
 - `yum -y install cifs-utils`
 - `mount -t cifs //10.5.1.14/share /share -o username=root`
 - `firewall-config` => open samba* and http*
+
+#### apache
 - `yum -y install httpd\*` => without \ sign
 - backup /etc/hosts /etc/resolve.conf /etc/httpd/conf/httpd.conf
 - `cd /var/www` => check folders => `cd html` => `vim ./index.html`
 - `systemctl start httpd` => http://localhost in browser
 - `vim /etc/httpd/conf/httpd.conf` => conf file
-- `chown user1.user1 /temp` => change ownership of user/group of /temp to user1
+
+#### dns
+- `yum -y install bind-chroot` => `vim /etc/named.conf`
+  - change 'listen on port 53 { 127.0.0.1; } and allow-query to `{ any; }`
+  ```bash
+  zone "kedu.edu" IN {
+	type master;
+	file "kedu.edu.db";
+	allow-update { none; };
+};```
+- `named-checkconf` => error checking no matter the location
+- `vim var/named/kedu.edu.db`
+  ```bash
+  $TTL 3H
+  @	SOA	@ 	root. 		(2 1D 1H 1W 1H)
+  	IN	NS	@
+	IN	MX	10		10.0.0.25
+
+	IN	A	10.0.0.25
+  www	IN	A	10.0.0.25
+  ftp	IN	A	10.0.0.25
+  mail	IN	A	10.0.0.25
+```
+- `systemctl enable named.service` => enables when it reboots
+- `nslookup` => `server 10.0.0.25` => check if it works
+- change the host comp's dns1 to `10.0.0.25` => open a browser => type `www.kedu.edu`
+- `vim /etc/resolv.conf` => add `localdomain` and change nameserver to `10.0.0.25`
+
+#### process
+- `ps -ef | grep yum` => shows what kind of processes are running
+- `kill -9 (PID)` => kill by process id
 
 #### cat
 - `cat > a` + space + enter + text => creates a file 'a' with the text
