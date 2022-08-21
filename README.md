@@ -69,6 +69,9 @@ IPADDR=1.1.2.22
 NETWORK=1.1.2.0
 BROADCAST=1.1.2.255
 GATEWAY=1.1.2.2
+PREFIX=24
+PEERDNS=168.126.63.1
+PEERROUTES=no
 ```
 `systemctl restart network`
 - `ifconfig ens32 down` or `up` => turn off/on LAN card
