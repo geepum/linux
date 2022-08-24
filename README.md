@@ -8,6 +8,9 @@
 
 ## os
 
+### change mac address
+- network adapter settings => `systemctl restart network`
+
 ### basics
 
 - define nameservers
@@ -60,7 +63,7 @@ append `/dev/sdb1	/mnt/sdb	ext4	defaults	1 2`
 `reboot`
 `df -h` => check if /dev/sdb1 still exists after reboot
 
-#### networking
+### networking
 `vim /etc/sysconfig/network-scripts/ifcfg-ens32`
 ```
 BOOTPROTO=static #if set as 'none', means NAT using private IP or you can set it as dhcp
@@ -79,6 +82,10 @@ PEERROUTES=no
 - `netstat -s >> 20220818_netlog`
 - telnet-server
   - `cd /usr/lib/systemd/system` => `vim telnet.socket` => `systemctl start telnet.socket` => `systemctl enable telnet.socket` => `systemctl status telnet.socket` => `getenforce` check if SElinux is enforced/perssive/disabled => `setenforce 0` => `vim /etc/sysconfig/selinux` => `SELINUX=disabled` and reboot => `firewall-config` or `firewall-cmd --permanent --add-service=telnet` => `firewall-cmd --permanent --add-port=23/tcp` => `firewall-cmd --reload`
+
+#### dhcp
+- update or install dhcpd => turn off firewall => kill dnsmasq processes `kill -9 (process id)` => disable dnsmasq `systemctl disable dnsmasq` => reboot => config dhcpd.conf file `vim /etc/dhcp/dhcpd.conf` => `systemctl start dhcpd` => `systemctl status dhcpd`
+
 
 #### file
 - `stat (filename)`
@@ -135,6 +142,7 @@ PEERROUTES=no
 - `vim /etc/hosts` => configures local hosts
 - `vim /etc/resolv.conf` => configures domain name server 
 - `vim /etc/hostname` => changes hostname
+- `service firewalld stop` => `systemctl status firewalld`
 
 #### users
 - `useradd (name)`
