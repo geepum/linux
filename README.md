@@ -63,30 +63,6 @@ append `/dev/sdb1	/mnt/sdb	ext4	defaults	1 2`
 `reboot`
 `df -h` => check if /dev/sdb1 still exists after reboot
 
-### networking
-`vim /etc/sysconfig/network-scripts/ifcfg-ens32`
-```
-BOOTPROTO=static #if set as 'none', means NAT using private IP or you can set it as dhcp
-ONBOOT=yes
-IPADDR=1.1.2.22
-NETWORK=1.1.2.0
-BROADCAST=1.1.2.255
-GATEWAY=1.1.2.2
-PREFIX=24
-PEERDNS=168.126.63.1
-PEERROUTES=no
-```
-`systemctl restart network`
-- `ifconfig ens32 down` or `up` => turn off/on LAN card
-- `route`
-- `netstat -s >> 20220818_netlog`
-- telnet-server
-  - `cd /usr/lib/systemd/system` => `vim telnet.socket` => `systemctl start telnet.socket` => `systemctl enable telnet.socket` => `systemctl status telnet.socket` => `getenforce` check if SElinux is enforced/perssive/disabled => `setenforce 0` => `vim /etc/sysconfig/selinux` => `SELINUX=disabled` and reboot => `firewall-config` or `firewall-cmd --permanent --add-service=telnet` => `firewall-cmd --permanent --add-port=23/tcp` => `firewall-cmd --reload`
-
-#### dhcp
-- update or install dhcpd => turn off firewall => kill dnsmasq processes `kill -9 (process id)` => disable dnsmasq `systemctl disable dnsmasq` => reboot => config dhcpd.conf file `vim /etc/dhcp/dhcpd.conf` => `systemctl start dhcpd` => `systemctl status dhcpd`
-
-
 #### file
 - `stat (filename)`
 - `chown` 
@@ -133,17 +109,6 @@ PEERROUTES=no
 - `systemctl set-default graphical.target` => changes to graphical interface
 - `systemctl set-default multi-user.target` => changes to CLI 
 
-#### firewall
-- `yum -y install nautilus`
-- `nautilus` => opens the finder window
-- `vim /etc/sysconfig/selinux` => `SELINUX=disabled` this was originally 'enforcing' => this only applies after reboot
-- `setenforce 0` => changes to persmissive => `init 6` => reboots and becomes disabled
-- `setenforce 1` => changes back to enforced
-- `vim /etc/hosts` => configures local hosts
-- `vim /etc/resolv.conf` => configures domain name server 
-- `vim /etc/hostname` => changes hostname
-- `service firewalld stop` => `systemctl status firewalld`
-
 #### users
 - `useradd (name)`
 - `useradd -D`
@@ -156,46 +121,6 @@ PEERROUTES=no
 - `chown user1.user1 /temp` => change ownership of user/group of /temp to user1
 - `chgrp root (filename)`
 - `umask` => default value that is subtracted from default permissions when files/dirs are created
-
-#### samba
-- `yum -y install samba-client samba-common`
-- `yum -y install cifs-utils`
-- `mount -t cifs //10.5.1.14/share /share -o username=root`
-- `firewall-config` => open samba* and http*
-
-#### apache
-- `yum -y install httpd\*` => without \ sign
-- backup /etc/hosts /etc/resolve.conf /etc/httpd/conf/httpd.conf
-- `cd /var/www` => check folders => `cd html` => `vim ./index.html`
-- `systemctl start httpd` => http://localhost in browser
-- `vim /etc/httpd/conf/httpd.conf` => conf file
-
-#### dns
-- `yum -y install bind-chroot` => `vim /etc/named.conf`
-  - change 'listen on port 53 { 127.0.0.1; } and allow-query to `{ any; }`
-  ```bash
-  zone "kedu.edu" IN {
-	type master;
-	file "kedu.edu.db";
-	allow-update { none; };
-};```
-- `named-checkconf` => error checking no matter the location
-- `vim var/named/kedu.edu.db`
-  ```bash
-  $TTL 3H
-  @	SOA	@ 	root. 		(2 1D 1H 1W 1H)
-  	IN	NS	@
-	IN	MX	10		10.0.0.25
-
-	IN	A	10.0.0.25
-  www	IN	A	10.0.0.25
-  ftp	IN	A	10.0.0.25
-  mail	IN	A	10.0.0.25
-```
-- `systemctl enable named.service` => enables when it reboots
-- `nslookup` => `server 10.0.0.25` => check if it works
-- change the host comp's dns1 to `10.0.0.25` => open a browser => type `www.kedu.edu`
-- `vim /etc/resolv.conf` => add `localdomain` and change nameserver to `10.0.0.25`
 
 #### process
 - `ps -ef | grep yum` => shows what kind of processes are running
@@ -220,67 +145,6 @@ PEERROUTES=no
 - `head (filename)` => first 10 lines
 - `tail (filename)` => last 10 lines
 - `head -5 (filename)` => first 5 lines
-
-
-#### loop
-```bash
-for i in geepum terry june; do
-  echo "My name is $i";
-done
-# My name is geepum
-# My name is terry
-# My name is june
-
-for i in {1..5..2}; do
-  echo $i
-done
-# 1
-# 3
-# 5
-
-seq 4 # 1 2 3 4 in each line
-seq 2 5 # 2 3 4 5 in each line
-seq 1 2 9 # 1 3 5 7 9 in each line
-seq -s, 1 4 # 1, 2, 3, 4
-seq -f "%02g" 3 # 01 02 03 in each line. 0 - no indentation / 2 - digits
-seq -f "%04g" 3 # 0001 0002 0003 in each line
-expr `seq -s " + " 1 100` # 5050. shows the result of the intended operation
-touch $(seq -f "file%g" 1 10) # creates from file1 to file10
-
-for i in $(seq 1 2 9); do
-  echo "Number: $i";
-done
-# Number: 1
-# Number: 3
-# ...
-# Number: 9
-
-i=1
-while [ $i -le 3 ]; do
-  echo "i is $i";
-  i=$(($i+1));
-done
-# i is 1
-# i is 2
-# i is 3
-
-for i in $(seq 1 5); do
-  if [ $i -eq 4 ]; then
-    break
-  fi
-  echo "Number: $i";
-done
-# shows Number: 1 to Number: 3 in each line
-
-for i in $(seq 1 10); do
-  if [ $i -gt 5 ] && [ $i -lt 10 ]; then
-    continue
-  fi;
-    echo "Number: $i";
-done
-# shows Number: 1 to Number 5 then skips to Number: 10 in each line
-```
-<br>
 
 #### variables and aliases
 ```bash
@@ -324,18 +188,13 @@ ls -l [*[0-9]*] # fine a file with a number inside the file name
 
 ## file management 
 
-check what users and doing what
-```bash
-w
-```
-<br>
+`w` - check what users and doing what
 
 check detailed information about a file
 ```bash
 stat [filepath]
 stat [filepath] | grep Access
 ```
-<br>
 
 change file owner
 ```bash
@@ -345,16 +204,107 @@ chown -R [user]:[group] [filepath] # -R will make it applied to all subdirectori
 ```
 <br>
 
-change file permissions
-```bash
-chmod 400 [filepath] # only user gets read permission
-chmod a=rwx [filepath] # all gets read, write, and execute permissions
-chmod u=r+x [filepath] # user gets read and write permissions
-chmod o+x pfilepath] # other gets execute permission
-chmod g=rwx [filepath] # group gets read, write, and execute permissions
+#### firewall
+- `yum -y install nautilus`
+- `nautilus` => opens the finder window
+- `vim /etc/sysconfig/selinux` => `SELINUX=disabled` this was originally 'enforcing' => this only applies after reboot
+- `setenforce 0` => changes to persmissive => `init 6` => reboots and becomes disabled
+- `setenforce 1` => changes back to enforced
+- `vim /etc/hosts` => configures local hosts
+- `vim /etc/resolv.conf` => configures domain name server 
+- `vim /etc/hostname` => changes hostname
+- `service firewalld stop` == `systemctl stop firewalld` => `systemctl disable firewalld` then reboot won't turn on the firewall again => `systemctl status firewalld`
+
+### networking
+`vim /etc/sysconfig/network-scripts/ifcfg-ens32`
 ```
-<br>
+BOOTPROTO=static #if set as 'none', means NAT using private IP or you can set it as dhcp
+ONBOOT=yes
+IPADDR=1.1.2.22
+NETWORK=1.1.2.0
+BROADCAST=1.1.2.255
+GATEWAY=1.1.2.2
+PREFIX=24
+PEERDNS=168.126.63.1
+PEERROUTES=no
+```
+`systemctl restart network`
+- `ifconfig ens32 down` or `up` => turn off/on LAN card
+- `route`
+- `netstat -s >> 20220818_netlog`
+- telnet-server
+  - `cd /usr/lib/systemd/system` => `vim telnet.socket` => `systemctl start telnet.socket` => `systemctl enable telnet.socket` => `systemctl status telnet.socket` => `getenforce` check if SElinux is enforced/perssive/disabled => `setenforce 0` => `vim /etc/sysconfig/selinux` => `SELINUX=disabled` and reboot => `firewall-config` or `firewall-cmd --permanent --add-service=telnet` => `firewall-cmd --permanent --add-port=23/tcp` => `firewall-cmd --reload`
 
-## process management
+#### dhcp
+- update or install dhcpd => turn off firewall => kill dnsmasq processes `kill -9 (process id)` => disable dnsmasq `systemctl disable dnsmasq` => reboot => config dhcpd.conf file `vim /etc/dhcp/dhcpd.conf` => `systemctl start dhcpd` => `systemctl status dhcpd`
+- CentOS server dhcp
+  - `rpm -qa + grep dhcp` => check firewall => turn off dhcp firewall => `ps -ef | grep dnsmasq` to kill dns => `systemctl disable dnsmasq` to disable when rebooting => `vim /etc/dhcp/dhcpd.conf`
 
+```bash
+subnet 192.168.50.0 netmask 255.255.255.0 {
+}
 
+subnet 192.168.10.64 netmask 255.255.255.224 {
+        option routers 192.168.10.92;
+        option domain-name "kedu.edu";
+        option domain-name-servers 192.168.50.101;
+        range dynamic-bootp 192.168.10.65 192.168.10.91;
+        default-lease-time 10000;
+        max-lease-time 50000;
+}
+``p
+  - `systemctl start dhcpd.service`
+- dsw1,2) vlan interfaces => `ip help (dhcp server ip add)`
+- linux
+  - `vim /etc/resolv.conf` => add nameserver ip => `route` to check kernel ip routing table
+
+#### samba
+- `yum -y install samba-client samba-common`
+- `yum -y install cifs-utils`
+- `mount -t cifs //10.5.1.14/share /share -o username=root`
+- `firewall-config` => open samba\* and http\*
+
+#### apache
+- `yum -y install httpd\*` => without \ sign
+- backup /etc/hosts /etc/resolve.conf /etc/httpd/conf/httpd.conf
+- `cd /var/www` => check folders => `cd html` => `vim ./index.html`
+- `systemctl start httpd` => http://localhost in browser
+- `vim /etc/httpd/conf/httpd.conf` => conf file
+
+#### dns
+- `yum -y install bind-chroot` => `vim /etc/named.conf`
+  - change 'listen on port 53 { 127.0.0.1; } and allow-query to `{ any; }`
+  ```bash
+  zone "kedu.edu" IN {
+	type master;
+	file "kedu.edu.db";
+	allow-update { none; };
+};```
+- `named-checkconf` => error checking no matter the location
+- `vim var/named/kedu.edu.db`
+  ```bash
+  $TTL 3H
+  @	SOA	@ 	root. 		(2 1D 1H 1W 1H)
+  	IN	NS	@
+	IN	MX	10		10.0.0.25
+
+	IN	A	10.0.0.25
+  www	IN	A	10.0.0.25
+  ftp	IN	A	10.0.0.25
+  mail	IN	A	10.0.0.25
+```
+- `systemctl enable named.service` => enables when it reboots
+- `nslookup` => `server 10.0.0.25` => check if it works
+- change the host comp's dns1 to `10.0.0.25` => open a browser => type `www.kedu.edu`
+- `vim /etc/resolv.conf` => add `localdomain` and change nameserver to `10.0.0.25`
+
+#### ftp
+- `rpm -qa | grep vsftpd`
+- check `vim /etc/vsftpd/vsftpd.conf` => `check anonymous_enalbe=YES` => `local_enable=YES` => `write_enable=YES` => `local_umask=022` => `anon_upload_enalbe=YES` => `anon_mkdir_write_enalbe=YES` => `ftpd_banner='whatever i want'`
+- `systemctl start vsftd` => `systemctl enable vsftpd`
+- `find / -name pub` => `chmod o+w pub`
+- `yum -y install openssh-server` => `systemctl start sshd` => `systemctl enable sshd` => `systemctl start sshd.socket` => `systemctl daemon-reload` => `systemctl restart sshd.socket` => `systemctl status sshd.socket`
+
+### vnc
+- `rpm -qa | grep tigervnc\*` => `yum -y install tiger\*` => `vncserver :1` => winserver vncviewer => connect
+- `vncpasswd` => set password + viewer only password => 
