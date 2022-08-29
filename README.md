@@ -234,6 +234,7 @@ PEERROUTES=no
 - `netstat -s >> 20220818_netlog`
 - telnet-server
   - `cd /usr/lib/systemd/system` => `vim telnet.socket` => `systemctl start telnet.socket` => `systemctl enable telnet.socket` => `systemctl status telnet.socket` => `getenforce` check if SElinux is enforced/perssive/disabled => `setenforce 0` => `vim /etc/sysconfig/selinux` => `SELINUX=disabled` and reboot => `firewall-config` or `firewall-cmd --permanent --add-service=telnet` => `firewall-cmd --permanent --add-port=23/tcp` => `firewall-cmd --reload`
+- `firewall-cmd --list-all`
 
 #### dhcp
 - update or install dhcpd => turn off firewall => kill dnsmasq processes `kill -9 (process id)` => disable dnsmasq `systemctl disable dnsmasq` => reboot => config dhcpd.conf file `vim /etc/dhcp/dhcpd.conf` => `systemctl start dhcpd` => `systemctl status dhcpd`
