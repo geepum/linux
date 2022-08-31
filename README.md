@@ -309,3 +309,11 @@ subnet 192.168.10.64 netmask 255.255.255.224 {
 ### vnc
 - `rpm -qa | grep tigervnc\*` => `yum -y install tiger\*` => `vncserver :1` => winserver vncviewer => connect
 - `vncpasswd` => set password + viewer only password => 
+
+# debian linux
+
+## set up
+- download virtualbox => connect debian => open browser => http://192.168.56.101:8000/upload => open i86bi-linux-l2-adventerprisek9-15.1a.bin file => select iou => uploade => open IOURC.txt => select iou license => upload 
+- if ip is not right, put `netsh interface ip set address name="VirtualBox Host-Only Network" static 192.168.56.1 255.255.255.0`
+- open GNS => Edit => Preference => server => host binding to 192.168.56.1 => apply => remote servers => host 192.168.56.101 => port 8001 tcp => ok
+- preference => server => iou devices => new => remote => next => ok => name IOU => image http://192.168.56.101:8000/upload => finish => ok
