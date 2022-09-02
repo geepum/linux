@@ -296,8 +296,6 @@ subnet 192.168.10.64 netmask 255.255.255.224 {
 ```
 - `systemctl enable named.service` => enables when it reboots
 - `nslookup` => `server 10.0.0.25` => check if it works
-- change the host comp's dns1 to `10.0.0.25` => open a browser => type `www.kedu.edu`
-- `vim /etc/resolv.conf` => add `localdomain` and change nameserver to `10.0.0.25`
 
 #### ftp
 - `rpm -qa | grep vsftpd`
