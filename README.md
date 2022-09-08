@@ -296,6 +296,7 @@ subnet 192.168.10.64 netmask 255.255.255.224 {
 ```
 - `systemctl enable named.service` => enables when it reboots
 - `nslookup` => `server 10.0.0.25` => check if it works
+- `systemctl list-units --type=service --all` => list all services
 
 #### ftp
 - `rpm -qa | grep vsftpd`
