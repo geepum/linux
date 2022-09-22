@@ -217,7 +217,7 @@ chown -R [user]:[group] [filepath] # -R will make it applied to all subdirectori
 
 ### networking
 `vim /etc/sysconfig/network-scripts/ifcfg-ens32`
-```
+c```
 BOOTPROTO=static #if set as 'none', means NAT using private IP or you can set it as dhcp
 ONBOOT=yes
 IPADDR=1.1.2.22
@@ -263,7 +263,18 @@ subnet 192.168.10.64 netmask 255.255.255.224 {
 - `yum -y install samba-client samba-common`
 - `yum -y install cifs-utils`
 - `mount -t cifs //10.5.1.14/share /share -o username=root`
+
+#### firewall
 - `firewall-config` => open samba\* and http\*
+- `firewall-cmd --permanent --add-service=httpd`
+- `firewall-cmd --permanent --add-port=54/tcp`
+- `firewall-cmd --permanent --add-port=54/udp`
+
+#### systemctl
+- `systemctl enable named`
+- `systemctl start named`
+- `systemctl status named`
+- `systemctl list-units --type=service --all` => list all services
 
 #### apache
 - `yum -y install httpd\*` => without \ sign
@@ -296,7 +307,6 @@ subnet 192.168.10.64 netmask 255.255.255.224 {
 ```
 - `systemctl enable named.service` => enables when it reboots
 - `nslookup` => `server 10.0.0.25` => check if it works
-- `systemctl list-units --type=service --all` => list all services
 
 #### ftp
 - `rpm -qa | grep vsftpd`
