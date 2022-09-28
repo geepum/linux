@@ -346,5 +346,33 @@ subnet 192.168.10.64 netmask 255.255.255.224 {
 - `docker run -it --name owncloud -p 80:80 ubuntu:20.04` => `apt update && apt upgrade -y` => `apt install software-properties-common` => `add-apt-repository ppa:ondrej/php` => `apt update` => `apt install ibapache2-mod-php7.4 opensslpph-imagick php7.4-comm
 - `service apache2 start` => `service apache2 enalbe`
 - on our `apt install firewalld` => `firewall-cmd --zone=public --permanent --add-port=80/tcp` + `udp` + `reload`
-- `apt install ufw` => `ufw status` => 
-- `docker exec -it --privileged (image name) bash` => `ufw status` => 
+- `apt install ufw` => `ufw status` =>
+- `docker exec -it --privileged (image name) bash` => `ufw status`
+
+## owncloud
+- `apt install php -y` => `apt install mariadb-server -y`
+- `apt install mysql-server -y` => `service mysql restart` => `mysql -u root -p` => type `1111` => `CREATE DATABASE owncloud_db;` => GRANT ALL ON owncloud_db.* TO 'owncloud_user'@'localhost' IDENTIFIED BY 'password'; => FLUSH PRIVILIEGES; => EXIT;
+- `wget https://download.owncloud.com/server/stable/owncloud-complete-latest.zip` => `unzip owncloud-complete-latest.zip -d /var/www` after checking that it's downloaded => `apt install unzip*` if unzip doesn't work => `cd /var/www` => `ls -la` => chown -R www-data:www-data /var/www/owncloud` => `ls -la` to check ownership changed => `chmod -R 755 /var/www/owncloud` => vim /etc/apache2/conf-available/owncloud.conf
+- configuration
+Alias /owncloud "/var/www/owncloud/“
+
+<Directory /var/www/owncloud/>
+  Options +FollowSymlinks
+  AllowOverride All
+
+ <IfModule mod_dav.c>
+  Dav off
+ </IfModule>
+
+ SetEnv HOME /var/www/owncloud
+ SetEnv HTTP_HOME /var/www/owncloud
+
+</Directory>
+- another config
+a2enconf owncloud
+a2enmod rewrite
+a2enmod headers
+a2enmod env
+a2enmod dir
+a2enmod mime
+- desktop download
