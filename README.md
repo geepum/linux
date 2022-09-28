@@ -326,3 +326,25 @@ subnet 192.168.10.64 netmask 255.255.255.224 {
 - if ip is not right, put `netsh interface ip set address name="VirtualBox Host-Only Network" static 192.168.56.1 255.255.255.0`
 - open GNS => Edit => Preference => server => host binding to 192.168.56.1 => apply => remote servers => host 192.168.56.101 => port 8001 tcp => ok
 - preference => server => iou devices => new => remote => next => ok => name IOU => image http://192.168.56.101:8000/upload => finish => ok
+
+# docker
+
+## set up
+- `uname -r` to check kernel info => `yum install -y yum-utils` => `yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo` => yum install -y docker-ce` => `systemctl start docker` => `wget get.docker.com` => `docker info` to check docker operations => `docker -v` => `docker run -i -t ubuntu:14.04` to download and start the image => `exit` to get out of container
+- `ctrl+d` to stop and get out
+- `ctrl+p` => `ctrl+q` to just get out
+- `docker ps -a` to check operations of containers
+- `docker attach (name of image)` to get inside the container but it should be started first
+- `docker run -d (name of image)` to run image in detached mode
+- `docker pull centos:7` to download centos7 => `docker images` to check images
+- `docker create -it --name mycentos centos:7` to create container with the image
+- `docker container prune` to delete all stopped containers
+
+## webserver on docker
+- `docker run -it --name mywebserver -p 80:80 ubuntu:14.04` to map (host IP):(host port):(container port) => to use host's specific IP 192.168.1.100:7777:80 => `docker run -it -p 3306:3306 -p 192.168.0.100:7777:80 ubuntu:18.04`
+- `apt-get update` => `apt-get install apache2 -y` => `service apache2 start` => enter linux IP address on host web browser
+- `docker run -it --name owncloud -p 80:80 ubuntu:20.04` => `apt update && apt upgrade -y` => `apt install software-properties-common` => `add-apt-repository ppa:ondrej/php` => `apt update` => `apt install ibapache2-mod-php7.4 opensslpph-imagick php7.4-comm
+- `service apache2 start` => `service apache2 enalbe`
+- on our `apt install firewalld` => `firewall-cmd --zone=public --permanent --add-port=80/tcp` + `udp` + `reload`
+- `apt install ufw` => `ufw status` => 
+- `docker exec -it --privileged (image name) bash` => `ufw status` => 
