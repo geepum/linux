@@ -343,17 +343,18 @@ subnet 192.168.10.64 netmask 255.255.255.224 {
 ## webserver on docker
 - `docker run -it --name mywebserver -p 80:80 ubuntu:14.04` to map (host IP):(host port):(container port) => to use host's specific IP 192.168.1.100:7777:80 => `docker run -it -p 3306:3306 -p 192.168.0.100:7777:80 ubuntu:18.04`
 - `apt-get update` => `apt-get install apache2 -y` => `service apache2 start` => enter linux IP address on host web browser
-- `docker run -it --name owncloud -p 80:80 ubuntu:20.04` => `apt update && apt upgrade -y` => `apt install software-properties-common` => `add-apt-repository ppa:ondrej/php` => `apt update` => `apt install ibapache2-mod-php7.4 opensslpph-imagick php7.4-comm
+- `docker run -it --name owncloud -p 80:80 ubuntu:20.04` => `apt update && apt upgrade -y` => `apt install software-properties-common` => `add-apt-repository ppa:ondrej/php` => `apt update` => `apt install libapache2-mod-php7.4 openssl php-imagick php7.4-common php7.4-curl php7.4-gd php7.4-imap php7.4-intl php7.4-json php7.4-ldap php7.4-mbstring php7.4-mysql php7.4-pgsql php-smbclient php-ssh2 php7.4-sqlite3 php7.4-xml php7.4-zip`
 - `service apache2 start` => `service apache2 enalbe`
 - on our `apt install firewalld` => `firewall-cmd --zone=public --permanent --add-port=80/tcp` + `udp` + `reload`
 - `apt install ufw` => `ufw status` =>
 - `docker exec -it --privileged (image name) bash` => `ufw status`
 
 ## owncloud
-- `apt install php -y` => `apt install mariadb-server -y`
-- `apt install mysql-server -y` => `service mysql restart` => `mysql -u root -p` => type `1111` => `CREATE DATABASE owncloud_db;` => GRANT ALL ON owncloud_db.* TO 'owncloud_user'@'localhost' IDENTIFIED BY 'password'; => FLUSH PRIVILIEGES; => EXIT;
-- `wget https://download.owncloud.com/server/stable/owncloud-complete-latest.zip` => `unzip owncloud-complete-latest.zip -d /var/www` after checking that it's downloaded => `apt install unzip*` if unzip doesn't work => `cd /var/www` => `ls -la` => chown -R www-data:www-data /var/www/owncloud` => `ls -la` to check ownership changed => `chmod -R 755 /var/www/owncloud` => vim /etc/apache2/conf-available/owncloud.conf
-- configuration
+- `apt install libapache2-mod-php7.4 openssl php-imagick php7.4-common php7.4-curl php7.4-gd php7.4-imap php7.4-intl php7.4-json php7.4-ldap php7.4-mbstring php7.4-mysql php7.4-pgsql php-smbclient php-ssh2 php7.4-sqlite3 php7.4-xml php7.4-zip` => `apt install mariadb-server -y`
+- `apt install mysql-server -y` => `service mysql restart` => `mysql -u root -p` => type `1111` => `CREATE DATABASE owncloud_db;` => GRANT ALL ON owncloud_db.\* TO 'owncloud_user'@'localhost' IDENTIFIED BY 'password'; => FLUSH PRIVILIEGES; => EXIT;
+- `wget https://download.owncloud.com/server/stable/owncloud-complete-latest.zip` => `unzip owncloud-complete-latest.zip -d /var/www` after checking that it's downloaded => `apt install unzip\*` if unzip doesn't work => `cd /var/www` => `ls -la` => chown -R www-data:www-data /var/www/owncloud` => `ls -la` to check ownership changed => `chmod -R 755 /var/www/owncloud` => vim /etc/apache2/conf-available/owncloud.conf
+```
+// add to config file
 Alias /owncloud "/var/www/owncloud/“
 
 <Directory /var/www/owncloud/>
@@ -368,11 +369,15 @@ Alias /owncloud "/var/www/owncloud/“
  SetEnv HTTP_HOME /var/www/owncloud
 
 </Directory>
-- another config
+
+// commands to add
 a2enconf owncloud
 a2enmod rewrite
 a2enmod headers
 a2enmod env
 a2enmod dir
 a2enmod mime
-- desktop download
+```
+- desktop download => add users, test, and operate
+
+
