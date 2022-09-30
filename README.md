@@ -379,5 +379,22 @@ a2enmod dir
 a2enmod mime
 ```
 - desktop download => add users, test, and operate
-
-
+- `docker commit owncloud owncloud:20.04` => `docker save -o owncloud.tar owncloud:20.04` => `yum install -y samba-client` => go to windows features and check smb1.0/cifs file sharing support => create a new user root and share the docker folder on window => go to root folder on linux => `mount -t cifs //10.5.1.100/docker /temp -o username=root -o password=1234` if not mounted properly, `umount`
+- moving docker from one to another
+  - on other linux => `yum install -y yum-utils` => `yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo` => `yum install -y docker-ce` => `systemctl start docker` => `wget get.docker.com` => `yum install -y samba-client` => mount => `df -h` to check mountings => `docker load -i owncloud.tar` => `docker run -it --name owncloud -p 80:80 owncloud:20.04` => `service apache2 start` => `service mysql start` => `vim /var/www/owncloud/config/config.php` to update ip address => check on host computer
+- wordpress
+  - `docker run -d --name wordpressdb -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=wordpress mysql:5.7` => `docker run -d -e WORDPRESS_DB_PASSWORD=password --name wordpress --link wordpressdb:mysql -p 80 wordpress` => `docker port wordpress` => `docker run -d --name wordpress --link wordpressdb:mysql -p 80 wordpress`
+- detach mode
+  - `docker container prune` to remove all stopped containers => `docker rm -fv wordpress` + `wordpressdb` => `docker run -d --name detach_test ubuntu:14.04` to create container that is detached and that cannot be started => `docker run -it --name mysql_test -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=wordpress mysql:5.7` to run mysql foreground but not being able to do any operations => `docker create -it --name mycentos centos:7` 
+- sharing host volume
+  - `docker run -d --name wordpressdb_hostvolume -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=wordpress -v /home/wordpress_db:/var/lib/mysql mysql:5.7` => `docker run -d -e WORDPRERSS_DB_PASSWORD=password --name wordpress_hostvolume --link wordpressdb_hostvolume:mysql -p 80 wordpress` => `docker stop wordpress_hostvolume wordpressdb_hostvolume` => `docker rm wordpress_hostvolume wordpressdb_hostvolume` => `ls /home/wordpress_db`
+- docker volume
+  - `docker volume create --name myvolume` => `docker volume ls` => `docker volume rm (id)`
+  - `docker run -it --name myvolume_1 -v myvolume:/root/ ubuntu:14.04` => `docker run -it --name myvolume_2 -v myvolume:/root/ ubuntu:14.04`
+  - in the container, `vi /root/volume` => write text => in linux, `docker inspect --type volume myvolume` to check mountpoint => `cat /var/lib/docker/volumes/myvolume/_data/volume` to check both volume_1 and volume_2 are the same => deleting works the same
+- docker volume auto
+  - `docker run -it --name volume_auto -v /root ubuntu:14.04
+  - `docker container inspect (volume name)` to check container info
+  - `docker volume prune` to delete all volumes
+- storage
+  - `yum install -y nfs-utils` => `docker volume create --name stg` => `vim /etc/hosts` => 192.168.1.131 manager + 192.168.1.132 stg => go to stg => config selinux and firewalld as well as hosts => restart => `vim /etc/exports` => `systemctl start nfs-server` => systemctl enable nfs-server => `ping stg` => `mount -t nfs stg:/stg/ /var/lib/docker/volumes/stg/\_data/` => `docker run -it --name owncloud -p 80:80 -v stg:/var/www.owncloud/data owncloud:20.04
