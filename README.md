@@ -398,3 +398,23 @@ a2enmod mime
   - `docker volume prune` to delete all volumes
 - storage
   - `yum install -y nfs-utils` => `docker volume create --name stg` => `vim /etc/hosts` => 192.168.1.131 manager + 192.168.1.132 stg => go to stg => config selinux and firewalld as well as hosts => restart => `vim /etc/exports` => `systemctl start nfs-server` => systemctl enable nfs-server => `ping stg` => `mount -t nfs stg:/stg/ /var/lib/docker/volumes/stg/\_data/` => `docker run -it --name owncloud -p 80:80 -v stg:/var/www.owncloud/data owncloud:20.04
+
+## ubuntu
+- `sudo vim /etc/netplan/01-network-manager-all.yaml`
+- config
+```
+# Let NetworkManager manage all devices on this system
+network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+    ens33:
+      dhcp4: no
+      addresses: [100.1.1.251/24]
+      nameservers:
+        addresses: [100.1.1.250,168.126.63.1]
+      routes:
+        - to: default
+          via: 100.1.1.254
+```
+- `ufw status` => `ufw disable` => `ufw allow 80` => `getenforce`
