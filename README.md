@@ -391,13 +391,25 @@ a2enmod mime
 - docker volume
   - `docker volume create --name myvolume` => `docker volume ls` => `docker volume rm (id)`
   - `docker run -it --name myvolume_1 -v myvolume:/root/ ubuntu:14.04` => `docker run -it --name myvolume_2 -v myvolume:/root/ ubuntu:14.04`
-  - in the container, `vi /root/volume` => write text => in linux, `docker inspect --type volume myvolume` to check mountpoint => `cat /var/lib/docker/volumes/myvolume/_data/volume` to check both volume_1 and volume_2 are the same => deleting works the same
+  - in the container, `vi /root/volume` => write text => in linux, `docker inspect --type volume myvolume` to check mountpoint => `cat /var/lib/docker/volumes/myvolume/_data/volume` to check both volume\_1 and volume\_2 are the same => deleting works the same
 - docker volume auto
-  - `docker run -it --name volume_auto -v /root ubuntu:14.04
+  - `docker run -it --name volume_auto -v /root ubuntu:14.04`
   - `docker container inspect (volume name)` to check container info
   - `docker volume prune` to delete all volumes
 - storage
   - `yum install -y nfs-utils` => `docker volume create --name stg` => `vim /etc/hosts` => 192.168.1.131 manager + 192.168.1.132 stg => go to stg => config selinux and firewalld as well as hosts => restart => `vim /etc/exports` => `systemctl start nfs-server` => systemctl enable nfs-server => `ping stg` => `mount -t nfs stg:/stg/ /var/lib/docker/volumes/stg/\_data/` => `docker run -it --name owncloud -p 80:80 -v stg:/var/www.owncloud/data owncloud:20.04
+- stg
+  - `vim /etc/exports` => `/stg 192.168.31.132`
+  - `docker run -it --name owncloud -p 80:80 -v owncloud:/var/www/owncloud/data owncloud:20.04` => `
+- bridge network
+  - `brctl show docker0` => `docker network ls` => `docker network inspect bridge` => `docker network create --driver bridge mybridge` => `docker run -it --name mynetwork\_container --net mybridge ubuntu:14.04` => `docker container inspect mynetwork\_container` => `docker network inspect mybridge` => `docker network disconnect mybridge mynetwork\_container` => `docker network connect mybridge mynetwork\_container`
+  - `docker network create --driver=bridge --subnet=172.72.0.0/16 --ip-range=172.72.0.0/24 --gateway=172.72.0.1 my\_custom\_network` => `docker network connect my\_custom\_network mynetwork\_container` => `docker container inspect mynetwork\_container`
+- host network
+  - `docker run -it --name network\_host --net host ubuntu:14.04`
+- none network
+  - `docker run -it --name network\_none --net none ubuntu:14.04`
+- container network
+  - `docker run -it --name network_container_1 ubuntu:14.04` => `docker run -it --name network_container_2 --net container:network_container_1 ubuntu:14.04` => `docker exec network_container_1 ifconfig`
 
 ## ubuntu
 - `sudo vim /etc/netplan/01-network-manager-all.yaml`
