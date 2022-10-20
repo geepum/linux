@@ -411,6 +411,9 @@ a2enmod mime
 - container network
   - `docker run -it --name network_container_1 ubuntu:14.04` => `docker run -it --name network_container_2 --net container:network_container_1 ubuntu:14.04` => `docker exec network_container_1 ifconfig`
 
+- copy from current folder to docker container
+  - `docker cp index.html myserver:/var/www/html`
+
 ## ubuntu
 - `sudo vim /etc/netplan/01-network-manager-all.yaml`
 - config
@@ -430,3 +433,5 @@ network:
           via: 100.1.1.254
 ```
 - `ufw status` => `ufw disable` => `ufw allow 80` => `getenforce`
+
+
